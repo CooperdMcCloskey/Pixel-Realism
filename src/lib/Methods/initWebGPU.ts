@@ -14,8 +14,8 @@ export async function initWebGPU(
   ctx.configure({device, format})
 
   const computeShaderModule = device.createShaderModule({code: computeShader});
-  const vertexShaderModule = device.createShaderModule({code: vertexShader});
-  const fragmentShaderModule = device.createShaderModule({code: fragmentShader});
+  const vertexShaderModule = device.createShaderModule({label: 'vertex', code: vertexShader});
+  const fragmentShaderModule = device.createShaderModule({label: 'fragment', code: fragmentShader});
 
   const computePipeline = device.createComputePipeline({
     layout: "auto", //Revisit later

@@ -5,18 +5,25 @@
   import fragmentShader from "$lib/shaders/fragment.wgsl?raw"
   import { initWebGPU } from "$lib/Methods/initWebGPU";
   import { draw } from "$lib/Methods/draw";
+  import { createTexture } from "$lib/Methods/createTexture";
+  import { bindTexture } from "$lib/Methods/bindTexture";
 
-  console.log(computeShader)
   async function init(){
     const canvas = document.getElementById("canvas") as HTMLCanvasElement;
     const ctx = canvas.getContext("webgpu") as GPUCanvasContext;
 
-    const { device, computePipeline, renderPipeline } = await initWebGPU(ctx, computeShader, vertexShader, fragmentShader)
+    const { device, computePipeline, renderPipeline } = await initWebGPU(ctx, computeShader, vertexShader, fragmentShader);
 
-    draw(ctx, device, renderPipeline, 6);
+    const { texture, sampler } = await createTexture('textures/test.png', device, renderPipeline);
+    
+    const bindGroups = [
+      bindTexture(device, renderPipeline, texture, sampler)
+    ]
+
+  draw(ctx, device, renderPipeline, bindGroups, 6);
   }
   onMount(()=>{
     init();
   })
 </script>
-<canvas id="canvas" width="640" height="480"></canvas>
+<canvas id="canvas" width="640" height="640"></canvas>
