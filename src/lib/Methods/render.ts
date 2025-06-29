@@ -1,4 +1,11 @@
-export function draw(ctx: GPUCanvasContext, device: GPUDevice, renderPipeline: GPURenderPipeline, bindGroups: Array<GPUBindGroup>, vertexCount: number){
+import { Sprite } from "$lib/Classes/Sprite";
+
+export function render(
+  ctx: GPUCanvasContext,
+  device: GPUDevice,
+  renderPipeline: GPURenderPipeline,
+  sprites: Array<Sprite>,
+){
   const commandEncoder = device.createCommandEncoder();
   const textureView = ctx.getCurrentTexture().createView();
 
@@ -12,13 +19,12 @@ export function draw(ctx: GPUCanvasContext, device: GPUDevice, renderPipeline: G
   });
 
   renderPass.setPipeline(renderPipeline)
-
-  for (let i = 0; i < bindGroups.length; i++){
-    renderPass.setBindGroup(i, bindGroups[i])
+  for (let sprite of sprites){
+    console.log(sprite)
+    renderPass.setBindGroup(1, sprite.bind(device, renderPipeline))
+    renderPass.draw(6);
   }
-
-  renderPass.draw(vertexCount);
   renderPass.end();
+
   device.queue.submit([commandEncoder.finish()]);
-  requestAnimationFrame(()=>{draw(ctx,device,renderPipeline,bindGroups, vertexCount)});
 }
